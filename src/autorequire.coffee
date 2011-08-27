@@ -1,5 +1,5 @@
-fs     = require 'fs'
-path   = require 'path'
+fs   = require 'fs'
+path = require 'path'
 
 Loader = require './loader'
 
@@ -15,6 +15,11 @@ Loader = require './loader'
 # hash with instance methods to be overridden.  For a full reference of the methods available to a
 # convention, take a look at [conventions.default](conventions/default.html).
 autorequire = (requirePath, convention='default') ->
+  raise TypeError, "autorequire only supports ./relative paths for now." unless requirePath[0] == '.'
+
+  workingDir = getCallingDirectoryFromStack()
+  rootPath   = path.normalize workingDir + '/' + requirePath
+
   conventionPrototype = switch typeof convention
     when 'function' then convention
 
@@ -27,9 +32,9 @@ autorequire = (requirePath, convention='default') ->
         this:: = convention
 
     else
-      raise Error, "autorequire doesn't know how to handle a convention of #{convention}"
+      raise TypeError, "autorequire doesn't know how to handle a convention of #{convention}"
 
-  walkDirectory requirePath, new conventionPrototype
+  walkDirectory rootPath, new conventionPrototype
 
 # ## Internal Helpers
 
@@ -69,6 +74,25 @@ lazyLoad = (object, property, getter) ->
       Object.defineProperty object, property, enumerable: true, value: result
 
       result
+
+STACK_PATH_EXTRACTOR = /\((.+)\:\d+\:\d+\)/
+
+# Helper to allow autorequire calls to support the same kind of relative pathing that require does.
+#
+# There has to be a better way of doing this than parsing a stack trace, though.  The offset
+# indicates how many calls we should go back in the stack to find a caller.  0 is the function that
+# is calling `getCallingDirectoryFromStack`.
+#
+# Passing __dirname from the caller is something I'd like to avoid in order to provide a more
+# consistent interface with require().  Lower cognitive load, and all that.
+getCallingDirectoryFromStack = (offset = 1) ->
+  stackLines = new Error().stack.split "\n"
+
+  # first line is the exception, second line is this method
+  match = STACK_PATH_EXTRACTOR stackLines[offset + 2]
+
+  # Fall back to the current directory if we don't have a valid caller.  They're likely in a REPL.
+  (match and path.dirname match[1]) or process.cwd()
 
 # Set up all our conventions to be lazy-loaded so that they can be inherited from with minimal
 # performance hit.
