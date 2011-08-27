@@ -31,12 +31,12 @@
     "vows":          "~0.5.11"
   },
 
-
   "scripts": {
-    "build":   "rm -rf lib doc && node_modules/coffee-script/bin/coffee -c -o lib/ src/ && npm run-script docco",
-    "console": "npm run-script build && rlwrap --always-readline node_modules/coffee-script/bin/coffee",
-    "docco":   "rm -rf doc && node_modules/docco/bin/docco src/",
-    "pretest": "npm run-script build",
-    "test":    "node_modules/vows/bin/vows test/* --spec"
+    "build":     "npm run-script build-lib && npm run-script build-doc",
+    "build-lib": "rm -rf lib && node_modules/coffee-script/bin/coffee -c -o lib/ src/",
+    "build-doc": "rm -rf doc && rm -rf doc && node_modules/docco/bin/docco src/",
+    "console":   "npm run-script build-lib && rlwrap --always-readline node_modules/coffee-script/bin/coffee",
+    "pretest":   "npm run-script build-lib",
+    "test":      "node_modules/vows/bin/vows test/*_test.coffee --isolate --spec"
   }
 }
