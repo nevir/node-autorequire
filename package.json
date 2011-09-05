@@ -1,6 +1,6 @@
 {
   "name":        "autorequire",
-  "version":     "0.1.1",
+  "version":     "0.1.2",
   "description": "Automatically requires source for a module/project, provided you follow a convention.",
   "keywords":   ["require", "autorequire", "autoload", "modules", "load", "loader"],
   "homepage":    "https://github.com/nevir/node-autorequire",
@@ -22,7 +22,7 @@
   },
 
   "engines": {
-    "node": "~v0.4.11"
+    "node": "v0.4.3 - v0.4.11"
   },
   "dependencies": {},
   "devDependencies": {
@@ -33,10 +33,11 @@
 
   "scripts": {
     "build":     "npm run-script build-lib && npm run-script build-doc",
-    "build-lib": "rm -rf lib && node_modules/coffee-script/bin/coffee -c -o lib/ src/",
-    "build-doc": "rm -rf doc && rm -rf doc && node_modules/docco/bin/docco src/",
-    "console":   "npm run-script build-lib && rlwrap --always-readline node_modules/coffee-script/bin/coffee",
+    "build-lib": "rm -rf lib && node_modules/.bin/coffee -c -o lib/ src/",
+    "build-doc": "rm -rf doc && rm -rf doc && node_modules/.bin/docco src/",
+    "console":   "npm run-script build-lib && rlwrap --always-readline node_modules/.bin/coffee",
     "pretest":   "npm run-script build-lib",
-    "test":      "node_modules/vows/bin/vows test/*_test.coffee --isolate --spec"
+    "test":      "node_modules/.bin/vows test/*_test.coffee --isolate --spec",
+    "test-all":  "scripts/test-all"
   }
 }

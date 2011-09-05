@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# In an ideal world, this would read our package.json parse the version string, and figure out
+# which versions of node need to be run.  We're being lazy for now:
+SUPPORTED_NODES="v0.4.3 v0.4.3 v0.4.4 v0.4.5 v0.4.6 v0.4.7 v0.4.8 v0.4.9 v0.4.10 v0.4.11"
+
+# Set up nvm, assuming you installed it normally
+source ~/.nvm/nvm.sh
+nvm sync
+
+# Install any missing versions
+INSTALLED_NODES=`nvm ls installed`
+
+for node in $SUPPORTED_NODES; do
+  # Is it installed?
+  installed=`for i in $INSTALLED_NODES; do if [ $i = $node ]; then echo "yes"; fi; done`
+
+  # Nope.  Fix that
+  if [ -z $installed ]; then
+    echo "Installing missing Node.js $node"
+    nvm install $node
+  fi
+done
+
+# And now test
+for node in $SUPPORTED_NODES; do
+  echo
+
+  nvm use $node
+  node_modules/.bin/vows test/*_test.coffee --isolate
+done
