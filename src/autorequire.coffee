@@ -13,8 +13,8 @@ Loader = require './loader'
 #
 # Otherwise, you can specify a convention by passing its constructor - or, you can pass an options
 # hash with instance methods to be overridden.  For a full reference of the methods available to a
-# convention, take a look at [conventions.default](conventions/default.html).
-autorequire = (requirePath, convention='default') ->
+# convention, take a look at [conventions.Default](conventions/default.html).
+autorequire = (requirePath, convention='Default') ->
   raise TypeError, "autorequire only supports ./relative paths for now." unless requirePath[0] == '.'
 
   workingDir = getCallingDirectoryFromStack()
@@ -100,7 +100,11 @@ conventions = {}
 for file in fs.readdirSync path.join(__dirname, 'conventions') when file != '.'
   convention = path.basename(file, path.extname(file))
   do (convention) ->
-    lazyLoad conventions, convention, ->
+    # conventions are prototypes, so CamelCaps it is.
+    conventionName = convention.split(/[-_]+/).map((val) -> val[0].toLocaleUpperCase() + val[1..]).join ''
+    conventionName = conventionName[0].toLocaleUpperCase() + conventionName[1..]
+
+    lazyLoad conventions, conventionName, ->
       require "./conventions/#{convention}"
 
 module.exports = autorequire

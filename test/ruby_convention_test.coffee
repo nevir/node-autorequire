@@ -1,7 +1,7 @@
 test = require './common'
 
 
-process.env['convention'] = 'ruby'
+process.env['convention'] = 'Ruby'
 
 subModulesShouldMatch = (opts) ->
   topic: opts.topic
@@ -15,7 +15,7 @@ subModulesShouldMatch = (opts) ->
 test.vows.describe('Ruby Convention').addBatch
 
   'when we autorequire the example package "fuzzy"': subModulesShouldMatch
-    topic: -> test.autorequire('./examples/fuzzy', 'classical')
+    topic: -> test.autorequire('./examples/fuzzy', 'Ruby')
     keys:  ['BabyThing', 'Kitten', 'Puppy', 'Squidlet']
 
   'when we require the example autorequired package "mixed_tastes"':
