@@ -29,7 +29,7 @@ Should the default convention not suit your needs, there are [several more defin
 (https://github.com/nevir/node-autorequire/tree/master/src/conventions).  You can specify a
 built-in convention by passing its name as the second argument to autorequire:
 
-    module.exports = require('autorequire')('./lib', 'classical');
+    module.exports = require('autorequire')('./lib', 'Classical');
 
 Or, should you want to override a specific piece of the convention, you can inherit from the default
 convention.  Or, for ease, you can simply pass a hash of instance methods, and autorequire will
