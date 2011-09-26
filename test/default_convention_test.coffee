@@ -34,4 +34,13 @@ test.vows.describe('Default Convention').addBatch
       keys:  ['bacon', 'bloodSausage']
       bases: ['bacon', 'blood-sausage']
 
+  'when we utilize lazy loads':
+    topic: -> require('./examples/spaghetti')
+
+    'explicit requires should be honored': (spaghetti) ->
+      test.assert.equal spaghetti.main.explicitSimpleDep, 'Simple Dep Stuff'
+
+    'autoloaded dependencies should be honored': (spaghetti) ->
+      test.assert.equal spaghetti.main.autoSimpleDep, 'Simple Dep Stuff'
+
 .export(module)

@@ -60,6 +60,7 @@ class Default
   # (#section-13).
   modifySandbox: (sandbox, module) ->
     module._globalLazyLoads = @globalLazyLoads(module)
+    module._require         = sandbox.require
 
     sandbox
 
@@ -129,7 +130,7 @@ class Default
   appendGlobalModules: (lazyLoads, module) ->
     for mod in @globalModules.concat @extraGlobalModules
       do (mod) =>
-        lazyLoads[@directoryToProperty(mod)] = -> require mod
+        lazyLoads[@directoryToProperty(mod)] = -> module._require mod
 
   # * All autorequireable properties in the same directory as the current module.
   appendSameLevelModules: (lazyLoads, module) ->

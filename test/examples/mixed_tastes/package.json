@@ -4,9 +4,5 @@
   "description": "Why choose coffee or java, when you could have both?",
 
   "main": "./index.js"
-
-  "engines": {
-    "node": "~v0.4.11"
-  },
 }
 

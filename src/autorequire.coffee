@@ -5,34 +5,46 @@ Loader = require './loader'
 
 
 # ## autorequire()
-# Set up an autorequired module at the specified path.  The path must be a relative or absolute
-# file system path.  autorequire does not honor require's pathing.
 #
-# Conventions that are bundled with the autorequire package can be specified by string; they are
-# loaded by looking up the class by the same name underneath 'autorequire.conventions'.
-#
-# Otherwise, you can specify a convention by passing its constructor - or, you can pass an options
-# hash with instance methods to be overridden.  For a full reference of the methods available to a
-# convention, take a look at [conventions.Default](conventions/default.html).
-autorequire = (requirePath, convention='Default') ->
-  raise TypeError, "autorequire only supports ./relative paths for now." unless requirePath[0] == '.'
+# Set up an autorequired module at the specified path.  The path must be a relative or absolute file
+# system path.  autorequire does not honor require's pathing.
+autorequire = (requirePath, conventionAndOrOptions...) ->
+  raise TypeError, 'autorequire only supports ./relative paths for now.' unless requirePath[0] == '.'
 
   workingDir = getCallingDirectoryFromStack()
   rootPath   = path.normalize workingDir + '/' + requirePath
 
-  conventionPrototype = switch typeof convention
-    when 'function' then convention
+  options = conventionAndOrOptions.pop() if typeof conventionAndOrOptions[conventionAndOrOptions.length - 1] == 'object'
 
-    when 'string'
-      throw new TypeError "There is no built-in '#{}' convention" unless conventions[convention]
-      conventions[convention]
+  # If you do not pass a convention, autorequire will default to
+  # [`conventions.Default`](conventions/default.html).
+  convention = conventionAndOrOptions.shift() or 'Default'
 
-    when 'object'
-      class CustomConvention
-        this:: = convention
+  # Conventions that are bundled with the autorequire package can be specified by string; they are
+  # loaded by looking up the class by the same name underneath `autorequire.conventions`.
+  if typeof convention == 'string'
+      throw new TypeError "There is no built-in '#{convention}' convention" unless conventions[convention]
+      conventionPrototype = conventions[convention]
 
-    else
-      raise TypeError, "autorequire doesn't know how to handle a convention of #{convention}"
+  # Otherwise, you can specify a convention by passing its constructor
+  if typeof convention == 'function'
+      conventionPrototype = convention
+
+  # If you pass an options hash, a custom convention will be built by inheriting the convention you
+  # specified (or the Default convention), setting each propery in the hash to the new convention's
+  # prototype.
+  #
+  # For a full reference of the methods available to a convention, take a look at
+  # [`conventions.Default`](conventions/default.html).
+  if options
+    class CustomConvention extends conventionPrototype
+    for own key, value of options
+      CustomConvention::[key] = value
+
+    conventionPrototype = CustomConvention
+
+  unless conventionPrototype?
+    throw new TypeError 'autorequire was unable to determine a valid convention, please check your arguments.'
 
   walkDirectory rootPath, new conventionPrototype
 
@@ -79,9 +91,10 @@ STACK_PATH_EXTRACTOR = /\((.+)\:\d+\:\d+\)/
 
 # Helper to allow autorequire calls to support the same kind of relative pathing that require does.
 #
-# There has to be a better way of doing this than parsing a stack trace, though.  The offset
-# indicates how many calls we should go back in the stack to find a caller.  0 is the function that
-# is calling `getCallingDirectoryFromStack`.
+# There has to be a better way of doing this than parsing a stack trace, though.
+#
+# The offset indicates how many calls we should go back in the stack to find a caller.  0 is the
+# function that is calling `getCallingDirectoryFromStack`.
 #
 # Passing __dirname from the caller is something I'd like to avoid in order to provide a more
 # consistent interface with require().  Lower cognitive load, and all that.
