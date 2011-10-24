@@ -1,6 +1,7 @@
 module.exports =
   vows:   require 'vows'
   assert: require 'assert'
+  path:   require 'path'
 
   autorequire: require '..'
 
@@ -10,3 +11,8 @@ module.exports.assert.keysEqual = (obj, keys) ->
 
 module.exports.assert.valuesEqual = (obj, values) ->
   @deepEqual (v for k,v of obj), values
+
+# Consider submitting this upstream
+module.exports.assert.exclude = (actual, expected, message='expected {actual} to exclude {expected}') ->
+  if (actual.indexOf?(expected) >= 0) or (actual.hasOwnProperty? expected)
+    module.exports.assert.fail(actual, expected, message, 'exclude', module.exports.assert.exclude)

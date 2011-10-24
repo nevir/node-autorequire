@@ -1,6 +1,6 @@
 {
   "name":        "autorequire",
-  "version":     "0.2.1",
+  "version":     "0.2.2",
   "description": "Automatically requires source for a module/project, provided you follow a convention.",
   "keywords":   ["require", "autorequire", "autoload", "modules", "load", "loader"],
   "homepage":    "https://github.com/nevir/node-autorequire",

@@ -1,3 +1,5 @@
+ModuleGroupFactory = require '../module_group_factory'
+
 # This convention attempts to adhere to a sane and relatively "standard" set of principles that
 # should work for most node modules.
 #
@@ -35,6 +37,12 @@
 #     }
 
 class Default
+  # ## Core Functionality
+
+  # Given a directory, build and return the root module group for it.
+  buildRootModuleGroup: (rootPath) ->
+    ModuleGroupFactory.buildModuleGroup @, rootPath
+
   # ## Naming Conventions
 
   # Given a directory name and parent path, return the property name that should be used to

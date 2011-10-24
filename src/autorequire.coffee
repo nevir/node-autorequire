@@ -47,33 +47,11 @@ autorequire = (requirePath, conventionAndOrOptions...) ->
   unless conventionPrototype?
     throw new TypeError 'autorequire was unable to determine a valid convention, please check your arguments.'
 
-  walkDirectory rootPath, new conventionPrototype
+  convention = new conventionPrototype
+  convention.buildRootModuleGroup rootPath
 
-# ## Internal Helpers
 
-# Iterate a path, and populate it with autorequire'ing components/properties.
-#
-# Returns the object describing that path and its sub-hierarchy.
-walkDirectory = (basePath, convention) ->
-  result = {}
-
-  for pathComponent in fs.readdirSync basePath when pathComponent[0] != '.'
-    fullPath = path.join(basePath, pathComponent)
-    pathStats = fs.statSync(fullPath)
-
-    do (fullPath) ->
-      # Directories recurse (upon lazy-load).
-      if pathStats.isDirectory()
-        utils.lazyLoad result, convention.directoryToProperty(pathComponent, basePath), ->
-          walkDirectory fullPath, convention
-
-      # Files are considered to be components, they're rquired upon lazy-load.
-      else if pathStats.isFile()
-        componentName = convention.fileToProperty(pathComponent, basePath)
-        utils.lazyLoad result, componentName, ->
-          Loader.loadModule componentName, fullPath, result, convention
-
-  result
+# ## Public API Properties
 
 # Set up all our conventions to be lazy-loaded so that they can be inherited from with minimal
 # performance hit.
