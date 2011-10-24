@@ -22,7 +22,7 @@ test.vows.describe('Classical Convention').addBatch
     topic: -> require('./examples/mixed_tastes')
 
     'we should be given an object with a camelCase key per namespace': (package) ->
-      test.assert.keysEqual package, ['imbibables', 'meatyGoodness']
+      test.assert.keysEqual package, ['imbibables', 'Legumes', 'meatyGoodness']
 
     'and we traverse into the "imbibables" namespace': subModulesShouldMatch
       topic: (package) -> package.imbibables

@@ -22,7 +22,7 @@ test.vows.describe('Ruby Convention').addBatch
     topic: -> require('./examples/mixed_tastes')
 
     'we should be given an object with an under_score key per namespace': (package) ->
-      test.assert.keysEqual package, ['imbibables', 'meaty_goodness']
+      test.assert.keysEqual package, ['imbibables', 'Legumes', 'meaty_goodness']
 
     'and we traverse into the "imbibables" namespace': subModulesShouldMatch
       topic: (package) -> package.imbibables

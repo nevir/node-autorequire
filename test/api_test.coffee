@@ -15,7 +15,7 @@ test.vows.describe('autorequire API').addBatch
         directoryToProperty: (directoryName, parentPath) -> directoryName.toUpperCase()
 
     'directoryToProperty should be overridden': (package) ->
-      test.assert.keysEqual package, ['IMBIBABLES', 'MEATY_GOODNESS']
+      test.assert.keysEqual package, ['IMBIBABLES', 'LEGUMES.COFFEE', 'MEATY_GOODNESS']
 
     'fileToProperty should be overridden': (package) ->
       test.assert.keysEqual package.IMBIBABLES, ['COFFEE.COFFEE', 'HIGHLY_DISTILLED_CACTUS_JUICE.JS', 'TEA.JS']
@@ -28,7 +28,7 @@ test.vows.describe('autorequire API').addBatch
         directoryToProperty: (directoryName, parentPath) -> directoryName.toUpperCase()
 
     'directoryToProperty should be overridden': (package) ->
-      test.assert.keysEqual package, ['IMBIBABLES', 'MEATY_GOODNESS']
+      test.assert.keysEqual package, ['IMBIBABLES', 'LEGUMES.COFFEE', 'MEATY_GOODNESS']
 
     'fileToProperty should be overridden': (package) ->
       test.assert.keysEqual package.IMBIBABLES, ['COFFEE.COFFEE', 'HIGHLY_DISTILLED_CACTUS_JUICE.JS', 'TEA.JS']
@@ -40,7 +40,7 @@ test.vows.describe('autorequire API').addBatch
         fileToProperty: (fileName, parentPath) -> fileName.toUpperCase()
 
     'directoryToProperty should be overridden': (package) ->
-      test.assert.keysEqual package, ['imbibables', 'meaty_goodness']
+      test.assert.keysEqual package, ['imbibables', 'LEGUMES.COFFEE', 'meaty_goodness']
 
     'fileToProperty should be overridden': (package) ->
       test.assert.keysEqual package.imbibables, ['COFFEE.COFFEE', 'HIGHLY_DISTILLED_CACTUS_JUICE.JS', 'TEA.JS']
