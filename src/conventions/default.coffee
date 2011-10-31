@@ -163,7 +163,7 @@ class Default
 
   # Strips the extension from a file name.
   stripFileExtension: (fileName) ->
-    /(.+?)(\.[^.]*$|$)/(fileName)[1]
+    fileName.match(/(.+?)(\.[^.]*$|$)/)[1]
 
   # CamelCaps a path component.
   camelCaps: (pathComponent) ->

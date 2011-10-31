@@ -31,7 +31,7 @@ module.exports =
     stackLines = new Error().stack.split "\n"
 
     # first line is the exception, second line is this method
-    match = @STACK_PATH_EXTRACTOR stackLines[offset + 2]
+    match = stackLines[offset + 2].match @STACK_PATH_EXTRACTOR
 
     # Fall back to the current directory if we don't have a valid caller.  They're likely in a REPL.
     (match and path.dirname match[1]) or process.cwd()
