@@ -5,8 +5,8 @@ commonGroupVows =
   'should not expose introspective properties as enumerable properties': (moduleGroup) ->
     properties = [k for k,v of moduleGroup]
 
-    test.assert.exclude properties, '__path__'
-    test.assert.exclude properties, '__name__'
+    test.assert.exclude properties, '__path'
+    test.assert.exclude properties, '__name'
 
 test.vows.describe('ModuleGroupFactory').addBatch
   'module groups':
@@ -22,13 +22,13 @@ test.vows.describe('ModuleGroupFactory').addBatch
       'common behavior': commonGroupVows
 
       "should allow introspection of the module group's path": (moduleGroup) ->
-        test.assert.equal moduleGroup.__path__, test.path.resolve './test/examples/mixed_tastes/lib'
+        test.assert.equal moduleGroup.__path, test.path.resolve './test/examples/mixed_tastes/lib'
 
       'should have a name of __root__': (moduleGroup) ->
-        test.assert.equal moduleGroup.__name__, '__root__'
+        test.assert.equal moduleGroup.__name, '__root'
 
       'should not have a __parent__': (moduleGroup) ->
-        test.assert.equal moduleGroup.__parent__, null
+        test.assert.equal moduleGroup.__parent, null
 
       'should expose child directories/files as enumerable properties on the module group': (moduleGroup) ->
         test.assert.keysEqual moduleGroup, ['imbibables', 'legumes', 'meatyGoodness']
@@ -39,15 +39,15 @@ test.vows.describe('ModuleGroupFactory').addBatch
       'common behavior': commonGroupVows
 
       "should allow introspection of the module group's path": (moduleGroup) ->
-        test.assert.equal moduleGroup.__path__, test.path.resolve './test/examples/mixed_tastes/lib/imbibables'
+        test.assert.equal moduleGroup.__path, test.path.resolve './test/examples/mixed_tastes/lib/imbibables'
 
       'should have their name appended to that of the parent group': (moduleGroup) ->
-        test.assert.equal moduleGroup.__name__, '__root__.imbibables'
+        test.assert.equal moduleGroup.__name, '__root.imbibables'
 
-      'should expose their parent module group via __parent__': (moduleGroup) ->
-        test.assert.isObject moduleGroup.__parent__
-        test.assert.equal    moduleGroup.__parent__.__name__, '__root__'
-        test.assert.equal    moduleGroup.__parent__.__path__, test.path.resolve './test/examples/mixed_tastes/lib'
+      'should expose their parent module group via __parent': (moduleGroup) ->
+        test.assert.isObject moduleGroup.__parent
+        test.assert.equal    moduleGroup.__parent.__name, '__root'
+        test.assert.equal    moduleGroup.__parent.__path, test.path.resolve './test/examples/mixed_tastes/lib'
 
       'should expose child directories/files as enumerable properties on the module group': (moduleGroup) ->
         test.assert.keysEqual moduleGroup, ['coffee', 'highlyDistilledCactusJuice', 'tea']

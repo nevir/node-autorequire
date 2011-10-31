@@ -19,7 +19,7 @@ class ModuleGroupFactory
     newFactory.build()
 
   # Set up a factory instance to build the module group.
-  constructor: (convention, path, name='__root__', parent) ->
+  constructor: (convention, path, name='__root', parent) ->
     # * The convention to use when determining the name of modules (files) and sub-groups
     #   (directories) within the module group.
     @convention = convention
@@ -42,11 +42,11 @@ class ModuleGroupFactory
   # Sticks useful non-enumerable properties on the module group:
   appendIntrospectiveProperties: ->
     # * The file system path to where this module group is defined.
-    Object.defineProperty @moduleGroup, '__path__', value: @path, enumerable: false
+    Object.defineProperty @moduleGroup, '__path', value: @path, enumerable: false
     # * The module group's named path.
-    Object.defineProperty @moduleGroup, '__name__', value: @name, enumerable: false
+    Object.defineProperty @moduleGroup, '__name', value: @name, enumerable: false
     # * The module group's parent group.
-    Object.defineProperty @moduleGroup, '__parent__', value: @parent, enumerable: false
+    Object.defineProperty @moduleGroup, '__parent', value: @parent, enumerable: false
 
   # Enumerate the module group's directory and define its properties
   enumerateModuleDirectory: ->
