@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
-var exec   = require('child_process').exec
-var fs     = require('fs')
-var path   = require('path')
-var semver = require('semver')
+var spawn = require('child_process').spawn
+var fs    = require('fs')
+var path  = require('path')
 
 
-var NVM_DIR      = path.join(process.env.HOME, '.nvm')
-var PROJECT_PATH = path.resolve(__dirname, '..')
-var PACKAGE_PATH = path.join(PROJECT_PATH, 'package.json')
-var TESTS_PATH   = path.join(PROJECT_PATH, 'test')
-var VOWS_PATH    = path.join(PROJECT_PATH, 'node_modules', '.bin', 'vows')
+var NVM_DIR        = path.join(process.env.HOME, '.nvm')
+var PROJECT_PATH   = path.resolve(__dirname, '..')
+var PACKAGE_PATH   = path.join(PROJECT_PATH, 'package.json')
+var TESTS_PATH     = path.join(PROJECT_PATH, 'test')
+var VOWS_PATH      = path.join(PROJECT_PATH, 'node_modules', '.bin', 'vows')
+var NVM_PROXY_PATH = path.join(PROJECT_PATH, 'scripts', 'nvm-proxy')
 
 try {
   if (!fs.statSync(NVM_DIR).isDirectory()) {
@@ -21,13 +21,18 @@ try {
 }
 
 
-function runTests(nodeVer, callback) {
-  commands  = 'source ' + NVM_DIR + '/nvm.sh'
-  commands += '&& nvm use ' + nodeVer
-  commands += '&& ' + VOWS_PATH + ' ' + TESTS_PATH + '/*_test.coffee --isolate'
+function spawnWithNvm(commands) {
+  // Ensure a clean environment so that we don't confuse nvm & npm.
+  cleanEnv = {
+    PATH: process.env.PATH,
+    HOME: process.env.HOME,
+    PWD:  process.env.PWD,
+    LANG: process.env.LANG
+  }
 
-  // The tests run quickly enough that we don't need to stream stdout.
-  exec(commands, callback)
+  commands = "source ~/.nvm/nvm.sh\n" + commands
+
+  return spawn('bash', ['-c', commands], {env: cleanEnv})
 }
 
 function installedNodes() {
@@ -84,16 +89,18 @@ function installMissingNodes(callback) {
     toInstall = versions.shift()
     process.stdout.write('Installing missing node ' + toInstall + '... ')
 
-    commands  = 'source ' + NVM_DIR + '/nvm.sh'
-    commands += '&& nvm install ' + toInstall
-
-    exec(commands, function(err, stdout, stderr) {
-      process.stdout.write('done\n')
-
-      if (versions.length == 0) {
-        callback()
+    installer = spawnWithNvm('nvm install ' + toInstall)
+    installer.on('exit', function(code) {
+      if (code !== 0) {
+        process.stdout.write('failed!  Try installing manually.\n')
+        process.exit(code)
       } else {
-        installNode(versions)
+        process.stdout.write('done\n')
+        if (versions.length == 0) {
+          callback()
+        } else {
+          installNode(versions)
+        }
       }
     })
   }
@@ -103,6 +110,25 @@ function installMissingNodes(callback) {
   } else {
     installNode(missing)
   }
+}
+
+function runTests(nodeVer, callback) {
+  commands  = 'nvm use ' + nodeVer + "\n"
+  commands += VOWS_PATH + ' ' + TESTS_PATH + '/*_test.coffee --isolate'
+
+  // Need output for failure cases!
+  output = ''
+
+  runner = spawnWithNvm(commands)
+  runner.stderr.on('data', function(data) {
+    output += data
+  })
+  runner.stdout.on('data', function(data) {
+    output += data
+  })
+  runner.on('exit', function(code) {
+    callback(code !== 0, output)
+  })
 }
 
 function summarize(statuses) {
@@ -141,13 +167,12 @@ installMissingNodes(function() {
     toRun = versions.shift()
     process.stdout.write('Testing node ' + toRun + '... ')
 
-    runTests(toRun, function(err, stdout, stderr) {
+    runTests(toRun, function(err, output) {
       statuses[toRun] = err === null
 
       if (err) {
         process.stdout.write('failed:\n')
-        console.log(stderr)
-        console.log(stdout)
+        console.log(output)
       } else {
         process.stdout.write('passed\n')
       }
