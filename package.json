@@ -1,6 +1,6 @@
 {
   "name":        "autorequire",
-  "version":     "0.2.4",
+  "version":     "0.2.5",
   "description": "Automatically requires source for a module/project, provided you follow a convention.",
   "keywords":   ["require", "autorequire", "autoload", "modules", "load", "loader"],
   "homepage":    "https://github.com/nevir/node-autorequire",
@@ -22,7 +22,7 @@
   },
 
   "engines": {
-    "node": "v0.4.0 - v0.4.12 || v0.5.0 - v0.5.10"
+    "node": "v0.4.0 - v0.4.12 || v0.5.0 - v0.5.10 || v0.6.0"
   },
   "dependencies": {},
   "devDependencies": {

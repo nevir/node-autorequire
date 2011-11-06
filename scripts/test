@@ -52,15 +52,20 @@ function targetedNodes() {
   nodes = []
 
   packageInfo   = JSON.parse(fs.readFileSync(PACKAGE_PATH))
-  versionRanges = packageInfo.engines.node.split('||')
+  versionRanges = packageInfo.engines.node.split(' || ')
 
   // We assume that each version range is stable for X & Y.
   for (i = 0; i < versionRanges.length; i++) {
     versions = versionRanges[i].match(/v(\d+)\.(\d+)\.(\d+) - v\d+\.\d+\.(\d+)/)
-    base     = 'v' + versions[1] + '.' + versions[2] + '.'
 
-    for (z = parseInt(versions[3]); z <= parseInt(versions[4]); z++) {
-      nodes.push(base + z)
+    if (versions) {
+      base = 'v' + versions[1] + '.' + versions[2] + '.'
+
+      for (z = parseInt(versions[3]); z <= parseInt(versions[4]); z++) {
+        nodes.push(base + z)
+      }
+    } else {
+      nodes.push(versionRanges[i])
     }
   }
 

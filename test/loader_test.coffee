@@ -64,6 +64,12 @@ commonProperties =
     test.assert.equal moduleGlobals.Buffer, Buffer
 
 # Some behavior actually does change:
+if test.semver.gte process.version, 'v0.5.1'
+  _(commonProperties).extend
+    'should include module.require': (moduleGlobals) ->
+      test.assert.equal typeof moduleGlobals.module.require, 'function'
+      test.assert.equal moduleGlobals.module.require('./relative'), 'Relative require'
+
 if test.semver.gte process.version, 'v0.5.2'
   delete commonProperties['should include require.paths']
 

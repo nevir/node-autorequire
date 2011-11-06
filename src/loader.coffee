@@ -42,55 +42,9 @@ class Loader extends Module
 
   # ## Compatibility Helpers
 
-  # Performs sanitization on content to mirror the default behavior.  Just tweaks the shebang atm.
-  #
-  # This mirrors v0.4.11.
-  _cleanContent: (content) ->
-    content.replace /^\#\!.*/, ''
-
-  # Builds the default sandbox for a module, mirroring default behavior
-  #
-  # This mirrors v0.4.11.
-  _buildSandbox: (filename) ->
-    sandbox = vm.createContext {}
-    for k, v of global
-      sandbox[k] = v
-
-    sandbox.require    = @_buildRequire()
-    sandbox.exports    = @exports
-    sandbox.__filename = filename
-    sandbox.__dirname  = path.dirname filename
-    sandbox.module     = this
-    sandbox.global     = sandbox
-    sandbox.root       = root
-
-    sandbox
-
-  # Builds the require() function for this module, and any properties on to duplicate the default
-  # Node behavior.
-  #
-  # This mirrors v0.4.11.
-  _buildRequire: ->
-    self    = this
-    require = (path) -> Module._load path, self
-
-    require.resolve = (request) -> Module._resolveFilename(request, self)[1]
-    require.paths   = Module._paths
-    require.main    = process.mainModule
-
-    require.extensions = Module._extensions
-    require.registerExtension = ->
-      throw new Error 'require.registerExtension() removed. Use require.extensions instead.'
-
-    require.cache = Module._cache
-
-    require
-
   # Overrides the built in load so that we can perform extension-specific behavior.
   #
   # It will not override an extension that isn't already registered with require.extensions.
-  #
-  # This mirrors v0.4.11.
   load: (filename) ->
     assert.ok not @loaded
 
@@ -116,5 +70,19 @@ class Loader extends Module
       content = require('coffee-script').compile fs.readFileSync(filename, 'utf8'),
         filename: filename, bare: true
       module._compile content, filename
+
+version = (parseInt(v) for v in process.version.match(/v(\d+)\.(\d+)\.(\d+)/)[1..3])
+
+# Include behavior appropriate for the current version of node
+behavior =
+  if      version[1] == 6                     then require './loader_behavior/v0.5.2'
+  else if version[1] == 5 and version[2] >= 2 then require './loader_behavior/v0.5.2'
+  else if version[1] == 5 and version[2] == 1 then require './loader_behavior/v0.5.1'
+  else if version[1] == 5 and version[2] == 0 then require './loader_behavior/v0.4.0'
+  else if version[1] == 4                     then require './loader_behavior/v0.4.0'
+  else throw new Error "No autorequire.Loader behavior defined for node #{process.version}"
+
+for k, v of behavior
+  Loader::[k] = v
 
 module.exports = Loader
