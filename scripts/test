@@ -143,6 +143,8 @@ function summarize(statuses) {
     }
   }
 
+  console.log()
+
   if (passed.length > 0) {
     console.log('The following nodes passed:')
     console.log('  ' + passed.join(', '))
@@ -168,7 +170,7 @@ installMissingNodes(function() {
     process.stdout.write('Testing node ' + toRun + '... ')
 
     runTests(toRun, function(err, output) {
-      statuses[toRun] = err === null
+      statuses[toRun] = !err
 
       if (err) {
         process.stdout.write('failed:\n')
