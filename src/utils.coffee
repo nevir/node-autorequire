@@ -2,14 +2,13 @@ path = require 'path'
 
 
 module.exports =
-  # Defines a lazy-loading property on an object that fills itsself in after the first call.
+  # Defines a lazy-loading property on an object that memoizes after the first call.
   lazyLoad: (object, property, getter) ->
     Object.defineProperty object, property,
       enumerable: true
       configurable: true # We need to be able to write over it
       get: ->
         result = getter()
-        # Overwrite the property now that it's loaded
         Object.defineProperty object, property, enumerable: true, value: result
 
         result
@@ -25,8 +24,8 @@ module.exports =
   # The offset indicates how many calls we should go back in the stack to find a caller.  0 is the
   # function that is calling `getCallingDirectoryFromStack`.
   #
-  # Passing __dirname from the caller is something I'd like to avoid in order to provide a more
-  # consistent interface with require().  Lower cognitive load, and all that.
+  # Passing __dirname from the caller is something to avoid in order to provide a more consistent
+  # interface with require().
   getCallingDirectoryFromStack: (offset = 1) ->
     stackLines = new Error().stack.split "\n"
 

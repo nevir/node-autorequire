@@ -2,19 +2,17 @@ path   = require 'path'
 Module = require 'module'
 vm     = require 'vm'
 
-# Behavioral functions that mirror parts of the official Module.prototype._compile function.
-#
-# This adheres to Node v0.5.1
+# Behavior to mirror Node's v0.5.1 implementation of
+# [`Module.prototype._compile`](https://github.com/joyent/node/blob/v0.5.1/lib/module.js#L345).
 module.exports =
-  # Performs sanitization on content to mirror the default behavior.  Just tweaks the shebang atm.
+  # Clean up shebang lines in input sources.
   _cleanContent: (content) ->
     content.replace /^\#\!.*/, ''
 
-  # Builds the require() function for this module, and any properties on to duplicate the default
-  # Node behavior.
+  # Builds the require() function for this module, and any properties on it.
   _buildRequire: ->
-    self    = this
-    require = (path) => @require path
+    self    = @
+    require = (path) -> self.require path
 
     require.resolve = (request) -> Module._resolveFilename(request, self)[1]
     require.paths   = Module._paths
@@ -28,7 +26,7 @@ module.exports =
 
     require
 
-  # Builds the default sandbox for a module, mirroring default behavior
+  # Builds the default sandbox for a module.
   _buildSandbox: (filename) ->
     sandbox = vm.createContext {}
     for k, v of global

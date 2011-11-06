@@ -8,12 +8,10 @@ Loader = require './loader'
 # A factory that generates module groups.
 #
 # In order to keep a module group's properties lean and mean, going with a classical approach is
-# overkill (and, really, any method we would need on them are effectively private).
-#
-# This is just a handy place to hang the logic of building one, as well as an efficient prototype.
+# overkill, and we don't want to have potential naming conflicts.
 class ModuleGroupFactory
-  # Static method for instantiating a factory and building a module group.  All arguments are passed
-  # to the factory's constructor.
+  # Each module group gets an instance of the factory, which is effectively the behavior and private
+  # state of the module group.
   @buildModuleGroup: (args...) ->
     newFactory = new @(args...)
     newFactory.build()

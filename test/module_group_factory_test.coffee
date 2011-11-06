@@ -24,10 +24,10 @@ test.vows.describe('ModuleGroupFactory').addBatch
       "should allow introspection of the module group's path": (moduleGroup) ->
         test.assert.equal moduleGroup.__path, test.path.resolve './test/examples/mixed_tastes/lib'
 
-      'should have a name of __root__': (moduleGroup) ->
+      'should have a name of __root': (moduleGroup) ->
         test.assert.equal moduleGroup.__name, '__root'
 
-      'should not have a __parent__': (moduleGroup) ->
+      'should not have a __parent': (moduleGroup) ->
         test.assert.equal moduleGroup.__parent, null
 
       'should expose child directories/files as enumerable properties on the module group': (moduleGroup) ->

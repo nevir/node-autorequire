@@ -7,27 +7,28 @@ ModuleGroupFactory = require './module_group_factory'
 
 # ## autorequire()
 #
-# Set up an autorequired module at the specified path.  The path must be a relative or absolute file
-# system path.  autorequire does not honor require's pathing.
-autorequire = (requirePath, conventionAndOrOptions...) ->
+# Set up an autorequired module at the specified path.  The path must be a relative file system
+# path.
+autorequire = (requirePath, conventionAndOrOverrides...) ->
   raise TypeError, 'autorequire only supports ./relative paths for now.' unless requirePath[0] == '.'
 
   workingDir = utils.getCallingDirectoryFromStack()
   rootPath   = path.normalize workingDir + '/' + requirePath
 
-  options = conventionAndOrOptions.pop() if typeof conventionAndOrOptions[conventionAndOrOptions.length - 1] == 'object'
+  # You can optionally specify a convention, as well as overrides to individual methods in that
+  # convention:
+  overrides = conventionAndOrOverrides.pop() if typeof conventionAndOrOverrides[conventionAndOrOverrides.length - 1] == 'object'
 
-  # If you do not pass a convention, autorequire will default to
-  # [`conventions.Default`](conventions/default.html).
-  convention = conventionAndOrOptions.shift() or 'Default'
+  # * autorequire defaults to [`conventions.Default`](conventions/default.html)
+  convention = conventionAndOrOverrides.shift() or 'Default'
 
-  # Conventions that are bundled with the autorequire package can be specified by string; they are
-  # loaded by looking up the class by the same name underneath `autorequire.conventions`.
+  # * Conventions that are bundled with the autorequire package can be specified by string; they are
+  #   loaded by looking up the class by the same name underneath `autorequire.conventions`.
   if typeof convention == 'string'
     throw new TypeError "There is no built-in '#{convention}' convention" unless conventions[convention]
     conventionPrototype = conventions[convention]
 
-  # Otherwise, you can specify a convention by passing its constructor
+  # * Otherwise, you can specify a convention by passing its constructor function.
   if typeof convention == 'function'
     conventionPrototype = convention
 
@@ -37,9 +38,9 @@ autorequire = (requirePath, conventionAndOrOptions...) ->
   #
   # For a full reference of the methods available to a convention, take a look at
   # [`conventions.Default`](conventions/default.html).
-  if options
+  if overrides
     class CustomConvention extends conventionPrototype
-    for own key, value of options
+    for own key, value of overrides
       CustomConvention::[key] = value
 
     conventionPrototype = CustomConvention
@@ -59,13 +60,13 @@ conventions = {}
 for file in fs.readdirSync path.join(__dirname, 'conventions') when file != '.'
   convention = path.basename(file, path.extname(file))
   do (convention) ->
-    # conventions are prototypes, so CamelCaps it is.
     conventionName = convention.split(/[-_]+/).map((val) -> val[0].toLocaleUpperCase() + val[1..]).join ''
     conventionName = conventionName[0].toLocaleUpperCase() + conventionName[1..]
 
     utils.lazyLoad conventions, conventionName, ->
       require "./conventions/#{convention}"
 
+# Exported properties; they adhere to the [`Default`](conventions/default.html) convention.
 module.exports = autorequire
 autorequire.conventions = conventions
 autorequire.Loader = Loader

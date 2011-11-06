@@ -5,7 +5,10 @@ vm     = require 'vm'
 Module = require 'module'
 
 
-# Loader injects extra behavior into the standard module loader to honor the current convention.
+# Loader injects several hooks into the standard Module loader so that conventions can specify their
+# custom behavior.
+#
+# It focuses entirely on sandboxed module loads to promote best practices, and to reduce complexity.
 class Loader extends Module
   constructor: (componentName, autorequireParent, convention) ->
     super componentName
@@ -13,19 +16,20 @@ class Loader extends Module
     @convention        = convention
     @autorequireParent = autorequireParent
 
-  # Load a module and return its exports, adhering to the given convention.
+  # Load a module and return its exports.
   @loadModule: (componentName, modulePath, autorequireParent, convention) ->
     loader = new this(componentName, autorequireParent, convention)
     loader.load(modulePath)
 
     loader.exports
 
-  # Unfortunately, Node's Module prototype doesn't break _compile into meaningful chunks, so we're
-  # stuck re-implementing parts of it.
+  # Unfortunately, Node's
+  # [`Module prototype`](https://github.com/joyent/node/blob/master/lib/module.js) doesn't break
+  # `_compile` into meaningful chunks, so we're stuck re-implementing parts of it in order to inject
+  # our hooks.
   #
-  # Note, however, that we put our foot down and **only** support sandboxed module evaluation.
-  # This allows us to mess with a module's global context with out messing up global for everyone
-  # else.
+  # Our re-implementation stops at the end of the sandboxed module section of `_compile` - right at
+  # the end of the `if (Module._contextLoad)` conditional in the Node source.
   _compile: (content, filename) ->
     throw new Error 'Compiling a root module is not supported by autorequire.' if @id == '.'
 
@@ -44,7 +48,8 @@ class Loader extends Module
 
   # Overrides the built in load so that we can perform extension-specific behavior.
   #
-  # It will not override an extension that isn't already registered with require.extensions.
+  # Any extension handlers specified via `_extensions` will override those defined on
+  # `require.extensions`.
   load: (filename) ->
     assert.ok not @loaded
 
@@ -61,11 +66,11 @@ class Loader extends Module
   # ## Extension Specific Helpers
 
   _extensions:
-    # We want to load coffeescript sources without the wrapper - we're already evaluating them within
-    # a context, so they won't leak into the global context.  This lets conventions pull defined
-    # properties out of the context w/o having to resort to module.exports.
+    # We want to load coffeescript sources without its scope wrapper - we're already evaluating them
+    # within a sandboxed context, so they won't leak into the global context.
     #
-    # This mirrors coffee-script v1.1.2.
+    # This allows conventions to defined properties out of the module's global context w/o having to
+    # resort to module.exports.
     '.coffee': (module, filename) ->
       content = require('coffee-script').compile fs.readFileSync(filename, 'utf8'),
         filename: filename, bare: true
@@ -73,7 +78,7 @@ class Loader extends Module
 
 version = (parseInt(v) for v in process.version.match(/v(\d+)\.(\d+)\.(\d+)/)[1..3])
 
-# Include behavior appropriate for the current version of node
+# Include behavior appropriate for the current version of Node.
 behavior =
   if      version[1] == 6                     then require './loader_behavior/v0.5.2'
   else if version[1] == 5 and version[2] >= 2 then require './loader_behavior/v0.5.2'
