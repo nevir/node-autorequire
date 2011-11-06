@@ -40,7 +40,7 @@ class ModuleGroupFactory
   # Sticks useful non-enumerable properties on the module group:
   appendIntrospectiveProperties: ->
     # * The file system path to where this module group is defined.
-    Object.defineProperty @moduleGroup, '__path', value: @path, enumerable: false
+    Object.defineProperty @moduleGroup, '__dirname', value: @path, enumerable: false
     # * The module group's named path.
     Object.defineProperty @moduleGroup, '__name', value: @name, enumerable: false
     # * The module group's parent group.
