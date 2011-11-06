@@ -68,4 +68,5 @@ for file in fs.readdirSync path.join(__dirname, 'conventions') when file != '.'
 
 module.exports = autorequire
 autorequire.conventions = conventions
+autorequire.Loader = Loader
 autorequire.ModuleGroupFactory = ModuleGroupFactory

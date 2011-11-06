@@ -2,6 +2,7 @@ module.exports =
   vows:   require 'vows'
   assert: require 'assert'
   path:   require 'path'
+  semver: require 'semver'
 
   autorequire: require '..'
 

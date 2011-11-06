@@ -28,7 +28,9 @@
   "devDependencies": {
     "coffee-script": "~1.1.2",
     "docco":         "https://github.com/nevir/docco/tarball/recursive_dirs",
-    "vows":          "~0.5.11"
+    "semver":        "~1.0.10",
+    "underscore":    "~1.2.1",
+    "vows":          "~0.5.13"
   },
 
   "scripts": {
