@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+npm run-script build-doc
+npm run-script test-all # runs build-lib
+
+if [[ `git status -s` != "" ]]; then
+  echo "Changes were made prior to publish.  Get your commits in order!"
+  exit 1
+fi
+
+git push
+git push --tags
