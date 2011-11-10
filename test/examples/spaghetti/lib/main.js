@@ -1,5 +1,5 @@
 module.exports = {
-  ohai: "The flying spaghetti monster was here."
+  ohai: 'The flying spaghetti monster was here.'
 };
 
 try {

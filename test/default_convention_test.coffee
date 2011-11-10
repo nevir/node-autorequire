@@ -43,4 +43,29 @@ test.vows.describe('Default Convention').addBatch
     'autoloaded dependencies should be honored': (spaghetti) ->
       test.assert.equal spaghetti.main.autoSimpleDep, 'Simple Dep Stuff'
 
+    'autoloadable siblings should be exposed': (spaghetti) ->
+      mod = spaghetti.children.kiddo
+
+      test.assert.equal mod.info, 'I am children.kiddo'
+      test.assert.equal mod.lazyLoads.bambino().info, 'I am children.bambino'
+
+    'autoloadable ancestors should be exposed': (spaghetti) ->
+      mod = spaghetti.children.bambino
+
+      test.assert.equal mod.info, 'I am children.bambino'
+      test.assert.equal mod.lazyLoads.main().ohai, 'The flying spaghetti monster was here.'
+
+    'autoloadable grandparents should be exposed': (spaghetti) ->
+      mod = spaghetti.children.grandkids.bebe
+
+      test.assert.equal mod.info, 'I am children.grandkids.bebe'
+      test.assert.equal mod.lazyLoads.bambino().info, 'I am children.bambino'
+      test.assert.equal mod.lazyLoads.main().ohai, 'The flying spaghetti monster was here.'
+      test.assert.equal mod.lazyLoads.children().bambino.info, 'I am children.bambino'
+
+    'ambiguous ancestors should cause an error': (spaghetti) ->
+      test.assert.throws (-> spaghetti.nephews.bibby), Error
+      # Edge case: should not throw because it doesn't reference itsself
+      test.assert.doesNotThrow (-> spaghetti.nephews.main), Error
+
 .export(module)

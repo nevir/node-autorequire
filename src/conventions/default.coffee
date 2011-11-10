@@ -88,7 +88,6 @@ class Default
         });
       } catch (err) {}
     }
-    delete module._globalLazyLoads;
     """ + source
 
   # Gives the convention an opportunity to modify the exports before they are returned.  The
@@ -129,8 +128,7 @@ class Default
     result = {}
 
     @appendGlobalModules(result, module)
-    @appendSameLevelModules(result, module)
-    @appendParentModules(result, module)
+    @appendProjectModules(result, module)
 
     result
 
@@ -140,16 +138,20 @@ class Default
       do (mod) =>
         lazyLoads[@directoryToProperty(mod)] = -> module._require mod
 
-  # * All autorequireable properties in the same directory as the current module.
-  appendSameLevelModules: (lazyLoads, module) ->
-    for key of module.autorequireParent
-      unless key == module.id
-        do (key) ->
-          lazyLoads[key] = -> module.autorequireParent[key]
+  # * All autorequireable properties visible to the current directory and above.
+  appendProjectModules: (lazyLoads, module) ->
+    moduleGroup = module.autorequireParent
 
-  # * All parent autorequirable properties up to the root autorequire for this package.  (When the
-  #   code is finished)
-  appendParentModules: (lazyLoads, module) ->
+    while moduleGroup
+      for key of moduleGroup
+        # Don't allow ambiguous properties
+        throw new Error "Ambiguous property '#{key}'" if key of lazyLoads # TODO: Better error
+        # And don't proxy the current module
+        continue if key == module.id
+
+        do (key, moduleGroup) -> lazyLoads[key] = -> moduleGroup[key]
+
+      moduleGroup = moduleGroup.__parent
 
   # For example, from within `lib/things/gizmo.js` (as part of the example outlined above):
   #
