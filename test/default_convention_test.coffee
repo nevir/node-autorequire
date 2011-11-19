@@ -8,7 +8,8 @@ subModulesShouldMatch = (opts) ->
     test.assert.keysEqual package, opts.keys
 
   'each exported property should match the exports of each submodule': (package) ->
-    test.assert.valuesEqual package, ({DAS_MODULE: m} for m in opts.bases)
+    sortedKeys = (k for k of package).sort()
+    test.assert.deepEqual (package[k] for k in sortedKeys), ({DAS_MODULE: m} for m in opts.bases.sort())
 
 
 test.vows.describe('Default Convention').addBatch

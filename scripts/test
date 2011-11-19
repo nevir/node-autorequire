@@ -148,15 +148,8 @@ function summarize(statuses) {
     }
   }
 
-  console.log()
-
-  if (passed.length > 0) {
-    console.log('The following nodes passed:')
-    console.log('  ' + passed.join(', '))
-    console.log()
-  }
-
   if (failed.length > 0) {
+    console.log()
     console.log('The following nodes failed:')
     console.log('  ' + failed.join(', '))
     console.log()

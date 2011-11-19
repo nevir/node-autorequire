@@ -1,3 +1,5 @@
+Module = require('module')
+
 module.exports = {
   ohai: 'The flying spaghetti monster was here.'
 };

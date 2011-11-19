@@ -10,7 +10,7 @@ subModulesShouldMatch = (opts) ->
     test.assert.keysEqual package, opts.keys
 
   'each exported property should match the exports of each submodule': (package) ->
-    test.assert.deepEqual (v[0] for k,v of package), opts.keys
+    test.assert.deepEqual (v[0] for k,v of package).sort(), opts.keys.sort()
 
 test.vows.describe('Ruby Convention').addBatch
 
