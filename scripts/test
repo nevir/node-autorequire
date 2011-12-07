@@ -56,7 +56,7 @@ function targetedNodes() {
 
   // We assume that each version range is stable for X & Y.
   for (i = 0; i < versionRanges.length; i++) {
-    versions = versionRanges[i].match(/v(\d+)\.(\d+)\.(\d+) - v\d+\.\d+\.(\d+)/)
+    versions = versionRanges[i].match(/>= (\d+)\.(\d+)\.(\d+) <= \d+\.\d+\.(\d+)/)
 
     if (versions) {
       base = 'v' + versions[1] + '.' + versions[2] + '.'
