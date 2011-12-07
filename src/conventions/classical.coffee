@@ -35,8 +35,11 @@ Default = require './default'
 
 
 class Classical extends Default
+
   fileToProperty: (fileName, parentPath) ->
-    @camelCaps @stripFileExtension fileName
+    baseName = @stripFileExtension fileName
+
+    @specialCaseModuleNames[baseName] or @camelCaps baseName
 
   modifyExports: (exports, module) ->
     unless module.sandbox[module.id]

@@ -45,19 +45,25 @@ class Default
 
   # ## Naming Conventions
 
+  # You can special case specific module names by defining them keyed on the file name without an
+  # extension.  For example: {cli: 'CLI'} would force cli.js to be named CLI.
+  specialCaseModuleNames: {}
+
   # Given a directory name and parent path, return the property name that should be used to
   # represent it in the module's hierarchy.
   #
   # The default is to convert to a `camelCase` style (splitting on - and _).
   directoryToProperty: (directoryName, parentPath) ->
-    @camelCase directoryName
+    @specialCaseModuleNames[directoryName] or @camelCase directoryName
 
   # Given a file name and parent path, return the property that should be used to represent it in
   # the module's hierarchy.
   #
   # The default is to expose the file's exports as a `camelCase` form of the file name.
   fileToProperty: (fileName, parentPath) ->
-    @camelCase @stripFileExtension fileName
+    baseName = @stripFileExtension fileName
+
+    @specialCaseModuleNames[baseName] or @camelCase baseName
 
   # ## Autorequired Source Evaluation
 
