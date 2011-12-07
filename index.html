@@ -1,0 +1,54 @@
+<!DOCTYPE html><html lang="en"><head><title>index</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="index"><meta name="groc-project-path" content="README.md"><meta name="groc-github-url" content="https://github.com/nevir/node-autorequire"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="document"><div class="segment"><div class="comments"><div class="wrapper"><h1 id="autorequire">Autorequire</h1>
+
+<p><a href="http://travis-ci.org/nevir/node-autorequire"><img src="https://secure.travis-ci.org/nevir/node-autorequire.png" alt="Build Status" title="" /></a></p>
+
+<p>Autorequire provides a means of defining a consistent file and directory structure for your Node.js
+packages.  It does not force any one structure upon you - instead, it provides common
+conventions, and the ability to define your own if they do not suit.</p>
+
+<p>At its heart, autorequire is an extensible replacement for Node's <code>require()</code>.  It also provides a
+simple way of navigating a node package (from within and out), using the package's directory
+structure as a guide, and the convention to assist in naming modules.</p>
+
+<p>When interacting with an autorequired Node package, each module and directory is lazy-loaded and
+then memoized upon reference.  This ensures that it is a minimal performance hit.</p>
+
+<h2 id="usage">Usage</h2>
+
+<p>To use autorequire for your package, at its most basic, is just the following in your index:</p>
+
+<pre><code>module.exports = require('autorequire')('./lib');
+</code></pre>
+
+<p>That's it!  You no longer need to require the core Node modules in any of your project's source
+files, nor do they need to require each other.  Consumers of your Node.js package require it
+normally, and should not notice a difference.</p>
+
+<h2 id="defining-custom-conventions">Defining Custom Conventions</h2>
+
+<p>Should the default convention not suit your needs, there are [several more defined]
+(https://github.com/nevir/node-autorequire/tree/master/src/conventions).  You can specify a
+built-in convention by passing its name as the second argument to autorequire:</p>
+
+<pre><code>module.exports = require('autorequire')('./lib', 'Classical');
+</code></pre>
+
+<p>Or, should you want to override a specific piece of the convention, you can inherit from the default
+convention.  Or, for ease, you can simply pass a hash of instance methods, and autorequire will
+manage the inheritance for you:</p>
+
+<pre><code>module.exports = require('autorequire')('./lib', {
+  directoryToProperty: function(directoryName, parentPath) {
+    return this.underscore(directoryName);
+  }
+});
+</code></pre>
+
+<p>For a full reference of the methods that a convention can define, see the docs for the default
+convention.</p>
+
+<h2 id="notes">Notes</h2>
+
+<p><strong>The caveat</strong> to autorequire is that every autorequired module is loaded within a sandboxed
+environment via <code>vm</code>'s <code>runInNewContext</code>.  This is so that lazy-loaded modules do not pollute the
+global context for everyone.  It's also a good practice for Node.js projects to adhere to.</p></div></div></div></div></body></html>

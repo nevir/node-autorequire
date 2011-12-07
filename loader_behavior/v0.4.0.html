@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="en"><head><title>loader_behavior/v0.4.0</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="loader_behavior/v0.4.0"><meta name="groc-project-path" content="src/loader_behavior/v0.4.0.coffee"><meta name="groc-github-url" content="https://github.com/nevir/node-autorequire"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="nv">path   = </span><span class="nx">require</span> <span class="s1">&#39;path&#39;</span>
+<span class="nv">Module = </span><span class="nx">require</span> <span class="s1">&#39;module&#39;</span>
+<span class="nv">vm     = </span><span class="nx">require</span> <span class="s1">&#39;vm&#39;</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>Behavior to mirror Node's v0.4.0 to v0.5.0 implementation of
+<a href="https://github.com/joyent/node/blob/v0.4.0/lib/module.js#L314"><code>Module.prototype._compile</code></a>.</p></div></div><div class="code"><div class="wrapper"><span class="nv">module.exports =</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>Clean up shebang lines in input sources.</p></div></div><div class="code"><div class="wrapper">  <span class="nv">_cleanContent: </span><span class="nf">(content) -&gt;</span>
+    <span class="nx">content</span><span class="p">.</span><span class="nx">replace</span> <span class="sr">/^\#\!.*/</span><span class="p">,</span> <span class="s1">&#39;&#39;</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>Builds the require() function for this module, and any properties on it.</p></div></div><div class="code"><div class="wrapper">  <span class="nv">_buildRequire: </span><span class="o">-&gt;</span>
+    <span class="nv">self    = </span><span class="err">@</span>
+    <span class="nv">require = </span><span class="nf">(path) -&gt;</span> <span class="nx">Module</span><span class="p">.</span><span class="nx">_load</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">self</span>
+
+    <span class="nv">require.resolve = </span><span class="nf">(request) -&gt;</span> <span class="nx">Module</span><span class="p">.</span><span class="nx">_resolveFilename</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">self</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="nv">require.paths   = </span><span class="nx">Module</span><span class="p">.</span><span class="nx">_paths</span>
+    <span class="nv">require.main    = </span><span class="nx">process</span><span class="p">.</span><span class="nx">mainModule</span>
+
+    <span class="nv">require.extensions = </span><span class="nx">Module</span><span class="p">.</span><span class="nx">_extensions</span>
+    <span class="nv">require.registerExtension = </span><span class="o">-&gt;</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span> <span class="s1">&#39;require.registerExtension() removed. Use require.extensions instead.&#39;</span>
+
+    <span class="nv">require.cache = </span><span class="nx">Module</span><span class="p">.</span><span class="nx">_cache</span>
+
+    <span class="nx">require</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>Builds the default sandbox for a module.</p></div></div><div class="code"><div class="wrapper">  <span class="nv">_buildSandbox: </span><span class="nf">(filename) -&gt;</span>
+    <span class="nv">sandbox = </span><span class="nx">vm</span><span class="p">.</span><span class="nx">createContext</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="k">of</span> <span class="nx">global</span>
+      <span class="nx">sandbox</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span>
+
+    <span class="nv">sandbox.require    = </span><span class="nx">@_buildRequire</span><span class="p">()</span>
+    <span class="nv">sandbox.exports    = </span><span class="nx">@exports</span>
+    <span class="nv">sandbox.__filename = </span><span class="nx">filename</span>
+    <span class="nv">sandbox.__dirname  = </span><span class="nx">path</span><span class="p">.</span><span class="nx">dirname</span> <span class="nx">filename</span>
+    <span class="nv">sandbox.module     = </span><span class="err">@</span>
+    <span class="nv">sandbox.global     = </span><span class="nx">sandbox</span>
+    <span class="nv">sandbox.root       = </span><span class="nx">root</span>
+
+    <span class="nx">sandbox</span></div></div></div></div></body></html>

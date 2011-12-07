@@ -1,8 +1,8 @@
- <!DOCTYPE html>  <html> <head>   <title>classical.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="../docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="../autorequire.html">                 <span class="base_path"></span><span class="file_name">autorequire.coffee</span>               </a>                                           <a class="source" href="../conventions/classical.html">                 <span class="base_path">conventions/</span><span class="file_name">classical.coffee</span>               </a>                                           <a class="source" href="../conventions/default.html">                 <span class="base_path">conventions/</span><span class="file_name">default.coffee</span>               </a>                                           <a class="source" href="../conventions/ruby.html">                 <span class="base_path">conventions/</span><span class="file_name">ruby.coffee</span>               </a>                                           <a class="source" href="../loader.html">                 <span class="base_path"></span><span class="file_name">loader.coffee</span>               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               classical.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>Not classical in the musical sense - classical in the class sense.  This convention strongly
+<!DOCTYPE html><html lang="en"><head><title>conventions/classical</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="conventions/classical"><meta name="groc-project-path" content="src/conventions/classical.coffee"><meta name="groc-github-url" content="https://github.com/nevir/node-autorequire"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="document"><div class="segment"><div class="comments"><div class="wrapper"><p>Not classical in the musical sense - classical in the class sense.  This convention strongly
 adheres to one component per file (where, ideally, each is a prototype or class).</p>
 
 <p>It expects that each source file defines a component named with <code>CamelCaps</code> to be defined in the
-'global' scope of that module.  No need to deal with <code>module.exports</code>!</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h2>An Example</h2>
+'global' scope of that module.  No need to deal with <code>module.exports</code>!</p></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><h2 id="an-example">An Example</h2>
 
 <p>Given this project hierarchy:</p>
 
@@ -29,12 +29,15 @@ adheres to one component per file (where, ideally, each is a prototype or class)
   Fizz: &lt;Fizz from fizz.js&gt;
   FizzBam: &lt;FizzBam from fizz_bam.js&gt;
 }
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Default = </span><span class="nx">require</span> <span class="s1">&#39;./default&#39;</span>
+</code></pre></div></div><div class="code"><div class="wrapper"><span class="nv">Default = </span><span class="nx">require</span> <span class="s1">&#39;./default&#39;</span>
 
 
 <span class="k">class</span> <span class="nx">Classical</span> <span class="k">extends</span> <span class="nx">Default</span>
+
   <span class="nv">fileToProperty: </span><span class="nf">(fileName, parentPath) -&gt;</span>
-    <span class="nx">@camelCaps</span> <span class="nx">@stripFileExtension</span> <span class="nx">fileName</span>
+    <span class="nv">baseName = </span><span class="nx">@stripFileExtension</span> <span class="nx">fileName</span>
+
+    <span class="nx">@specialCaseModuleNames</span><span class="p">[</span><span class="nx">baseName</span><span class="p">]</span> <span class="o">or</span> <span class="nx">@camelCaps</span> <span class="nx">baseName</span>
 
   <span class="nv">modifyExports: </span><span class="nf">(exports, module) -&gt;</span>
     <span class="nx">unless</span> <span class="nx">module</span><span class="p">.</span><span class="nx">sandbox</span><span class="p">[</span><span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span>
@@ -42,6 +45,4 @@ adheres to one component per file (where, ideally, each is a prototype or class)
 
     <span class="nx">module</span><span class="p">.</span><span class="nx">sandbox</span><span class="p">[</span><span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span>
 
-<span class="nv">module.exports = </span><span class="nx">Classical</span>
-
-</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html>  
+<span class="nv">module.exports = </span><span class="nx">Classical</span></div></div></div></div></body></html>

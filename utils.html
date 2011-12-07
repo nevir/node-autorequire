@@ -1,0 +1,22 @@
+<!DOCTYPE html><html lang="en"><head><title>utils</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="utils"><meta name="groc-project-path" content="src/utils.coffee"><meta name="groc-github-url" content="https://github.com/nevir/node-autorequire"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="nv">path = </span><span class="nx">require</span> <span class="s1">&#39;path&#39;</span>
+
+
+<span class="nv">module.exports =</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>Defines a lazy-loading property on an object that memoizes after the first call.</p></div></div><div class="code"><div class="wrapper">  <span class="nv">lazyLoad: </span><span class="nf">(object, property, getter) -&gt;</span>
+    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span> <span class="nx">object</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span>
+      <span class="nv">enumerable: </span><span class="kc">true</span>
+      <span class="nv">configurable: </span><span class="kc">true</span> <span class="c1"># We need to be able to write over it</span>
+      <span class="nv">get: </span><span class="o">-&gt;</span>
+        <span class="nv">result = </span><span class="nx">getter</span><span class="p">()</span>
+        <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span> <span class="nx">object</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nv">enumerable: </span><span class="kc">true</span><span class="p">,</span> <span class="nv">value: </span><span class="nx">result</span>
+
+        <span class="nx">result</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>Regex to identify a file's path in a line of backtrace.</p></div></div><div class="code"><div class="wrapper">  <span class="nv">STACK_PATH_EXTRACTOR: </span><span class="sr">/\((.+)\:\d+\:\d+\)/</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>Helper to allow autorequire calls to support the same kind of relative pathing that require
+performs.</p>
+
+<p>There has to be a better way of doing this than parsing a stack trace, though.</p>
+
+<p>The offset indicates how many calls we should go back in the stack to find a caller.  0 is the
+function that is calling <code>getCallingDirectoryFromStack</code>.</p>
+
+<p>Passing __dirname from the caller is something to avoid in order to provide a more consistent
+interface with require().</p></div></div><div class="code"><div class="wrapper">  <span class="nv">getCallingDirectoryFromStack: </span><span class="nf">(offset = 1) -&gt;</span>
+    <span class="nv">stackLines = </span><span class="k">new</span> <span class="nb">Error</span><span class="p">().</span><span class="nx">stack</span><span class="p">.</span><span class="nx">split</span> <span class="s2">&quot;\n&quot;</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>first line is the exception, second line is this method</p></div></div><div class="code"><div class="wrapper">    <span class="nv">match = </span><span class="nx">stackLines</span><span class="p">[</span><span class="nx">offset</span> <span class="o">+</span> <span class="mi">2</span><span class="p">].</span><span class="nx">match</span> <span class="nx">@STACK_PATH_EXTRACTOR</span></div></div></div><div class="segment"><div class="comments"><div class="wrapper"><p>Fall back to the current directory if we don't have a valid caller.  They're likely in a REPL.</p></div></div><div class="code"><div class="wrapper">    <span class="p">(</span><span class="nx">match</span> <span class="o">and</span> <span class="nx">path</span><span class="p">.</span><span class="nx">dirname</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">or</span> <span class="nx">process</span><span class="p">.</span><span class="nx">cwd</span><span class="p">()</span></div></div></div></div></body></html>
