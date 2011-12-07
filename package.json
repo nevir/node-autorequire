@@ -1,6 +1,6 @@
 {
   "name":        "autorequire",
-  "version":     "0.2.8",
+  "version":     "0.2.9",
   "description": "Automatically requires source for a module/project, provided you follow a convention.",
   "keywords":   ["require", "autorequire", "autoload", "modules", "load", "loader"],
   "homepage":    "https://github.com/nevir/node-autorequire",
@@ -27,7 +27,7 @@
   "dependencies": {},
   "devDependencies": {
     "coffee-script": "1.1.3",
-    "docco":         "https://github.com/nevir/docco/tarball/recursive_dirs",
+    "groc":          "~0.1.0",
     "semver":        "~1.0.10",
     "underscore":    "~1.2.1",
     "vows":          "~0.5.13"
@@ -35,7 +35,7 @@
 
   "scripts": {
     "build-lib":  "rm -rf lib && node_modules/.bin/coffee -c -o lib/ src/",
-    "build-doc":  "rm -rf doc && rm -rf doc && node_modules/.bin/docco src/",
+    "build-doc":  "rm -rf doc && rm -rf doc && groc",
     "console":    "npm run-script build-lib && rlwrap --always-readline node_modules/.bin/coffee",
     "prepublish": "scripts/prepublish",
     "test":       "npm run-script build-lib && node_modules/.bin/vows test/*_test.coffee --isolate --spec",
