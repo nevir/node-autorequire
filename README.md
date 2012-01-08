@@ -1,6 +1,4 @@
-# Autorequire
-
-[![Build Status](https://secure.travis-ci.org/nevir/node-autorequire.png)](http://travis-ci.org/nevir/node-autorequire)
+# Autorequire [![Build Status](https://secure.travis-ci.org/nevir/node-autorequire.png)](http://travis-ci.org/nevir/node-autorequire)
 
 Autorequire provides a means of defining a consistent file and directory structure for your Node.js
 packages.  It does not force any one structure upon you - instead, it provides common
