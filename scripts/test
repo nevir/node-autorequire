@@ -52,7 +52,7 @@ function targetedNodes() {
   nodes = []
 
   packageInfo   = JSON.parse(fs.readFileSync(PACKAGE_PATH))
-  versionRanges = packageInfo.engines.node.split(' || ')
+  versionRanges = packageInfo.testedEngines.node.split(' || ')
 
   // We assume that each version range is stable for X & Y.
   for (i = 0; i < versionRanges.length; i++) {
