@@ -80,11 +80,15 @@ version = (parseInt(v) for v in process.version.match(/v(\d+)\.(\d+)\.(\d+)/)[1.
 
 # Include behavior appropriate for the current version of Node.
 behavior =
-  if      version[1] == 6                     then require './loader_behavior/v0.5.2'
-  else if version[1] == 5 and version[2] >= 2 then require './loader_behavior/v0.5.2'
-  else if version[1] == 5 and version[2] == 1 then require './loader_behavior/v0.5.1'
-  else if version[1] == 5 and version[2] == 0 then require './loader_behavior/v0.4.0'
-  else if version[1] == 4                     then require './loader_behavior/v0.4.0'
+  if      version[1] == 8 and version[2] >= 0  then require './loader_behavior/v0.6.10'
+  else if version[1] == 7 and version[2] >= 2  then require './loader_behavior/v0.6.10'
+  else if version[1] == 7 and version[2] >= 0  then require './loader_behavior/v0.5.2'
+  else if version[1] == 6 and version[2] >= 10 then require './loader_behavior/v0.6.10'
+  else if version[1] == 6 and version[2] >= 0  then require './loader_behavior/v0.5.2'
+  else if version[1] == 5 and version[2] >= 2  then require './loader_behavior/v0.5.2'
+  else if version[1] == 5 and version[2] >= 1  then require './loader_behavior/v0.5.1'
+  else if version[1] == 5 and version[2] >= 0  then require './loader_behavior/v0.4.0'
+  else if version[1] == 4 and version[2] >= 0  then require './loader_behavior/v0.4.0'
   else throw new Error "No autorequire.Loader behavior defined for node #{process.version}"
 
 for k, v of behavior
