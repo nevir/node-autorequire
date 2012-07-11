@@ -155,8 +155,8 @@ class Default
           # Don't allow ambiguous properties
           unless @allowAmbiguousProperties
             throw new Error "Ambiguous property '#{key}'" if key of lazyLoads # TODO: Better error
-          # And don't proxy the current module
-          continue if key == module.id
+        # And don't proxy the current module
+        continue if key == module.id
 
         do (key, moduleGroup) -> lazyLoads[key] = -> moduleGroup[key]
 
