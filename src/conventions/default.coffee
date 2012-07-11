@@ -150,11 +150,13 @@ class Default
 
     while moduleGroup
       for key of moduleGroup
-        # Don't allow ambiguous properties
-        unless @allowAmbiguousProperties
-          throw new Error "Ambiguous property '#{key}'" if key of lazyLoads # TODO: Better error
-        # And don't proxy the current module
-        continue if key == module.id
+        # Check for strict mode
+        if @strictMode is not false
+          # Don't allow ambiguous properties
+          unless @allowAmbiguousProperties
+            throw new Error "Ambiguous property '#{key}'" if key of lazyLoads # TODO: Better error
+          # And don't proxy the current module
+          continue if key == module.id
 
         do (key, moduleGroup) -> lazyLoads[key] = -> moduleGroup[key]
 
