@@ -33,6 +33,6 @@ Classical = require './classical'
 
 class Ruby extends Classical
   directoryToProperty: (directoryName, parentPath) ->
-    @specialCaseModuleNames[baseName] or @underscore directoryName
+    @specialCaseModuleNames[directoryName] or @underscore directoryName
 
 module.exports = Ruby
